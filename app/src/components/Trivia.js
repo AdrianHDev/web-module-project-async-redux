@@ -38,9 +38,9 @@ const Trivia = (props) => {
   };
   shuffledAnswers = shuffleAnswers();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     props.onFetchTrivia();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const verifyAnswer = (ev) => {

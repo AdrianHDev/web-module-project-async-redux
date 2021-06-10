@@ -37,8 +37,6 @@ const reducer = (state = initialState, action) => {
         ...state,
         isFetching: false,
         triviaQuestion: action.payload,
-        error: "",
-        /* I question if this is necessary because FETCH_TRIVIA_START should always run before a success... */
       };
     case FETCH_TRIVIA_FAIL:
       return {
