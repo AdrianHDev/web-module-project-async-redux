@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
@@ -21,13 +21,14 @@ const stringToColour = (str) => {
 
 
 const Trivia = (props) => {
+  const [shuffledAns, setShuffledAns] = useState([])
   console.log(props);
   const shuffleAnswers = () => {
     const answerList = [
       ...props.triviaQuestion.incorrect_answers,
       props.triviaQuestion.correct_answer,
     ];
-
+    console.log(answerList, 'correct answer:',props.triviaQuestion.correct_answer, shuffledAnswers)
     if (
       JSON.stringify(shuffledAnswers.sort()) !==
       JSON.stringify(answerList.sort())
@@ -48,16 +49,19 @@ const Trivia = (props) => {
         ];
       }
 
-      return answerList;
+      setShuffledAns(answerList);
     } else return shuffledAnswers;
   };
-  shuffledAnswers = shuffleAnswers();
+  
 
   useEffect(() => {
     props.onFetchTrivia();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    shuffleAnswers();
+  }, [props.triviaQuestion])
   const verifyAnswer = (ev) => {
     ev.preventDefault();
     console.log(ev.target.value, props.triviaQuestion.correct_answer);
@@ -90,7 +94,7 @@ const Trivia = (props) => {
         >
           {atob(props.triviaQuestion.question)}
         </Card.Title>
-        {shuffledAnswers.map((answer) => {
+        {shuffledAns.map((answer) => {
           return (
             <Button
               onClick={verifyAnswer}
