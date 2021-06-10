@@ -3,7 +3,22 @@ import { connect } from "react-redux";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { getTrivia, triviaAnsweredWith } from "../actions";
+import hex2rgb from 'hex2rgb'
 let shuffledAnswers = [];
+
+const stringToColour = (str) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  let colour = "#";
+  for (let i = 0; i < 3; i++) {
+    var value = (hash >> (i * 8)) & 0xff;
+    colour += ("00" + value.toString(16)).substr(-2);
+  }
+  return colour;
+};
+
 
 const Trivia = (props) => {
   console.log(props);
@@ -56,14 +71,35 @@ const Trivia = (props) => {
   };
 
   return (
-    <Card>
+    <Card
+      border="dark"
+      text="white"
+      bg="dark"
+      style={{
+        maxHeight: "50vh",
+        maxWidth: "50vw",
+      }}
+    >
       <Card.Body>
-        <Card.Title>{atob(props.triviaQuestion.question)}</Card.Title>
+        <Card.Title
+          style={{
+            color: (() => {
+              return (props.correct !== null ? (props.correct) ? '#32de84' : 'red' : 'white')
+            })(),
+          }}
+        >
+          {atob(props.triviaQuestion.question)}
+        </Card.Title>
         {shuffledAnswers.map((answer) => {
           return (
             <Button
               onClick={verifyAnswer}
               block
+              style={{
+                background: stringToColour(atob(answer)),
+                color: hex2rgb(stringToColour(atob(answer))).yiq,
+                transition: '0'
+              }}
               value={answer}
               size="lg"
               variant="primary"
@@ -72,6 +108,7 @@ const Trivia = (props) => {
             </Button>
           );
         })}
+        <br />
         <Card.Footer>
           <strong>
             {(() => {

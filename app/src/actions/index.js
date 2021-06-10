@@ -12,7 +12,7 @@ export const getTrivia = () => (dispatch) => {
   console.log("in dispatch!");
   dispatch({ type: FETCH_TRIVIA_START });
   axios
-    .get("https://opentdb.com/api.php?amount=1&encode=base64")
+    .get("https://opentdb.com/api.php?amount=1&encode=base64&category=15") /* Category is set here. 15 is Video Game trivia. */
     .then((res) => {
       console.log(res.data.response);
       switch (res.data.response_code) {

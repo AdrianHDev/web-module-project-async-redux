@@ -29,12 +29,12 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         isFetching: true,
-        correct: null,
         error: "",
       };
     case FETCH_TRIVIA_SUCCESS:
       return {
         ...state,
+        correct: null,
         isFetching: false,
         triviaQuestion: action.payload,
       };
