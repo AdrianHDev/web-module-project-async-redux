@@ -1,21 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
+import { getTrivia, triviaAnsweredWith } from "../actions";
+let shuffledAnswers = []
 
 const Trivia = (props) => {
-  const fetchTrivia = (e) => {
-    e.preventDefault();
-    props.getTrivia();
-  };
   console.log(props);
-
   const shuffleAnswers = () => {
-    const answerList = [...currentQ.incorrect_answers, currentQ.correct_answer];
-    var currentIndex = answerList.length,
-      randomIndex;
+    const answerList = [
+      ...props.triviaQuestion.incorrect_answers,
+      props.triviaQuestion.correct_answer,
+    ];
 
-    // While there remain elements to shuffle...
+    if (JSON.stringify(shuffledAnswers.sort()) !== JSON.stringify(answerList.sort())) {
+
+      var currentIndex = answerList.length,
+      randomIndex;
+      
+      // While there remain elements to shuffle...
     while (0 !== currentIndex) {
       // Pick a remaining element...
       randomIndex = Math.floor(Math.random() * currentIndex);
@@ -27,69 +30,49 @@ const Trivia = (props) => {
         answerList[currentIndex],
       ];
     }
-
+    
     return answerList;
+  }
+  else return shuffledAnswers;
   };
+  shuffledAnswers=shuffleAnswers();
 
-  const currentQ = props.triviaQuestions[currentQIndex];
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {props.onFetchTrivia()}, [])
 
   const verifyAnswer = (ev) => {
     ev.preventDefault();
-    if (ev.target.value === currentQ.correct_answer) {
-      setCorrect(true);
-    } else {
-      setCorrect(false);
+    console.log(ev.target.value, props.triviaQuestion.correct_answer)
+    if (props.correct === null){
+      if (ev.target.value === props.triviaQuestion.correct_answer) {
+        props.onTriviaAnswered(true);
+      } else {
+        props.onTriviaAnswered(false);
+      }
     }
   };
-
-  const shuffledAnswers = shuffleAnswers();
 
   return (
     <Card>
       <Card.Body>
-        <Card.Title>{currentQ.question}</Card.Title>
-        <Button
+        <Card.Title>{atob(props.triviaQuestion.question)}</Card.Title>
+        {shuffledAnswers.map((answer) => {
+        return (<Button
           onClick={verifyAnswer}
           block
-          value={shuffledAnswers[0]}
+          value={answer}
           size="lg"
           variant="primary"
-        >
-          {shuffledAnswers[0]}
-        </Button>
-        <Button
-          onClick={verifyAnswer}
-          block
-          value={shuffledAnswers[1]}
-          size="lg"
-          variant="primary"
-        >
-          {shuffledAnswers[1]}
-        </Button>
-        <Button
-          onClick={verifyAnswer}
-          block
-          value={shuffledAnswers[2]}
-          size="lg"
-          variant="primary"
-        >
-          {shuffledAnswers[2]}
-        </Button>
-        <Button
-          onClick={verifyAnswer}
-          block
-          value={shuffledAnswers[3]}
-          size="lg"
-          variant="primary"
-        >
-          {shuffledAnswers[3]}
-        </Button>
+        >{atob(answer)}</Button>)})}
         <Card.Footer>
-          <strong>{
-          (() => {
-              if(correct !== null) {return correct ? 'Correct!': 'Incorrect!'}
-              else return null
-            })()}</strong>
+          <strong>
+            {(() => {
+              if (props.correct !== null) {
+                return props.correct ? "Correct!" : "Incorrect!";
+              } else return null;
+            })()}
+          </strong>
         </Card.Footer>
       </Card.Body>
     </Card>
@@ -98,8 +81,19 @@ const Trivia = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    triviaQuestions: state.triviaQuestions,
+    triviaQuestion: state.triviaQuestion,
+    correct: state.correct,
   };
 };
 
-export default connect(mapStateToProps, {})(Trivia);
+const mapDispatchProps = (dispatch) => {
+  return {
+    onFetchTrivia: () => {
+      dispatch(getTrivia());
+    },
+    onTriviaAnswered: (correct) => {
+      dispatch(triviaAnsweredWith(correct))
+    }
+  };
+};
+export default connect(mapStateToProps, mapDispatchProps)(Trivia);

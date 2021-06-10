@@ -1,43 +1,59 @@
 import {
-    FETCH_TRIVIA_START,
-    FETCH_TRIVIA_FAIL,
-    FETCH_TRIVIA_SUCCESS
-} from '../actions'
+  FETCH_TRIVIA_START,
+  FETCH_TRIVIA_FAIL,
+  FETCH_TRIVIA_SUCCESS,
+  TRIVIA_ANSWERED,
+} from "../actions";
 
 const initialState = {
-    //#region
-    triviaQuestions: [{"category":"Science & Nature","type":"multiple","difficulty":"medium","question":"The moons, Miranda, Ariel, Umbriel, Titania and Oberon orbit which planet?","correct_answer":"Uranus","incorrect_answers":["Jupiter","Venus","Neptune"]}],
-    //#endregion
-    error: '',
-    isFetching: false,
-}
+  //#region
+  triviaQuestion: {
+    category: "RW50ZXJ0YWlubWVudDogVmlkZW8gR2FtZXM=",
+    type: "bXVsdGlwbGU=",
+    difficulty: "bWVkaXVt",
+    question:
+      "V2hhdCB3YXMgdGhlIGNoYXJhY3RlciBLaXJieSBvcmlnaW5hbGx5IGdvaW5nIHRvIGJlIG5hbWVkPw==",
+    correct_answer: "UG9wb3Bv",
+    incorrect_answers: ["RGVkZWRl", "V2FkZGxlIERlZQ==", "UHJpbmNlIFB1ZmY="],
+  },
+  //#endregion
+  error: "",
+  isFetching: false,
+  correct: null,
+};
 
 const reducer = (state = initialState, action) => {
-    console.log('reducer @', action);
-    switch ( action.type ) {
-        case FETCH_TRIVIA_START:
-            return {
-                ...state, 
-                isFetching: true,
-                error: 
-                '',
-            }
-        case FETCH_TRIVIA_SUCCESS:
-            return {
-                ...state,
-                isFetching: false,
-                triviaQuestions: action.payload,
-                error: '' 
-                /* I question if this is necessary because FETCH_TRIVIA_START should always run before a success... */
-            }
-        case FETCH_TRIVIA_FAIL:
-            return {
-                ...state,
-                error: action.payload
-            }
-        default:
-            return state;
-    } 
-} 
+  console.log("reducer @", action);
+  switch (action.type) {
+    case FETCH_TRIVIA_START:
+      return {
+        ...state,
+        isFetching: true,
+        correct: null,
+        error: "",
+      };
+    case FETCH_TRIVIA_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        triviaQuestion: action.payload,
+        error: "",
+        /* I question if this is necessary because FETCH_TRIVIA_START should always run before a success... */
+      };
+    case FETCH_TRIVIA_FAIL:
+      return {
+        ...state,
+        error: action.payload,
+      };
+    case TRIVIA_ANSWERED:
+      console.log("TRIVIA ANSWERED!");
+      return {
+        ...state,
+        correct: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 
 export default reducer;
