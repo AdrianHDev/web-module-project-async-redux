@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { getTrivia, triviaAnsweredWith } from "../actions";
-let shuffledAnswers = []
+let shuffledAnswers = [];
 
 const Trivia = (props) => {
   console.log(props);
@@ -13,38 +13,40 @@ const Trivia = (props) => {
       props.triviaQuestion.correct_answer,
     ];
 
-    if (JSON.stringify(shuffledAnswers.sort()) !== JSON.stringify(answerList.sort())) {
-
+    if (
+      JSON.stringify(shuffledAnswers.sort()) !==
+      JSON.stringify(answerList.sort())
+    ) {
       var currentIndex = answerList.length,
-      randomIndex;
-      
+        randomIndex;
+
       // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-      // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
+      while (0 !== currentIndex) {
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
 
-      // And swap it with the current element.
-      [answerList[currentIndex], answerList[randomIndex]] = [
-        answerList[randomIndex],
-        answerList[currentIndex],
-      ];
-    }
-    
-    return answerList;
-  }
-  else return shuffledAnswers;
+        // And swap it with the current element.
+        [answerList[currentIndex], answerList[randomIndex]] = [
+          answerList[randomIndex],
+          answerList[currentIndex],
+        ];
+      }
+
+      return answerList;
+    } else return shuffledAnswers;
   };
-  shuffledAnswers=shuffleAnswers();
-
+  shuffledAnswers = shuffleAnswers();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {props.onFetchTrivia()}, [])
+  useEffect(() => {
+    props.onFetchTrivia();
+  }, []);
 
   const verifyAnswer = (ev) => {
     ev.preventDefault();
-    console.log(ev.target.value, props.triviaQuestion.correct_answer)
-    if (props.correct === null){
+    console.log(ev.target.value, props.triviaQuestion.correct_answer);
+    if (props.correct === null) {
       if (ev.target.value === props.triviaQuestion.correct_answer) {
         props.onTriviaAnswered(true);
       } else {
@@ -58,13 +60,18 @@ const Trivia = (props) => {
       <Card.Body>
         <Card.Title>{atob(props.triviaQuestion.question)}</Card.Title>
         {shuffledAnswers.map((answer) => {
-        return (<Button
-          onClick={verifyAnswer}
-          block
-          value={answer}
-          size="lg"
-          variant="primary"
-        >{atob(answer)}</Button>)})}
+          return (
+            <Button
+              onClick={verifyAnswer}
+              block
+              value={answer}
+              size="lg"
+              variant="primary"
+            >
+              {atob(answer)}
+            </Button>
+          );
+        })}
         <Card.Footer>
           <strong>
             {(() => {
@@ -92,8 +99,8 @@ const mapDispatchProps = (dispatch) => {
       dispatch(getTrivia());
     },
     onTriviaAnswered: (correct) => {
-      dispatch(triviaAnsweredWith(correct))
-    }
+      dispatch(triviaAnsweredWith(correct));
+    },
   };
 };
 export default connect(mapStateToProps, mapDispatchProps)(Trivia);
