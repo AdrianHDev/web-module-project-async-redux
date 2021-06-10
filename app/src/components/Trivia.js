@@ -4,7 +4,6 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { getTrivia, triviaAnsweredWith } from "../actions";
 import hex2rgb from 'hex2rgb'
-let shuffledAnswers = [];
 
 const stringToColour = (str) => {
   let hash = 0;
@@ -22,35 +21,28 @@ const stringToColour = (str) => {
 
 const Trivia = (props) => {
   const [shuffledAns, setShuffledAns] = useState([])
-  console.log(props);
   const shuffleAnswers = () => {
     const answerList = [
       ...props.triviaQuestion.incorrect_answers,
       props.triviaQuestion.correct_answer,
     ];
-    console.log(answerList, 'correct answer:',props.triviaQuestion.correct_answer, shuffledAnswers)
-    if (
-      JSON.stringify(shuffledAnswers.sort()) !==
-      JSON.stringify(answerList.sort())
-    ) {
-      var currentIndex = answerList.length,
-        randomIndex;
+    let currentIndex = answerList.length,
+      randomIndex;
 
-      // While there remain elements to shuffle...
-      while (0 !== currentIndex) {
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
 
-        // And swap it with the current element.
-        [answerList[currentIndex], answerList[randomIndex]] = [
-          answerList[randomIndex],
-          answerList[currentIndex],
-        ];
-      }
+      // And swap it with the current element.
+      [answerList[currentIndex], answerList[randomIndex]] = [
+        answerList[randomIndex],
+        answerList[currentIndex],
+      ];
+    }
 
-      setShuffledAns(answerList);
-    } else return shuffledAnswers;
+    setShuffledAns(answerList);
   };
   
 
@@ -61,6 +53,7 @@ const Trivia = (props) => {
 
   useEffect(() => {
     shuffleAnswers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.triviaQuestion])
   const verifyAnswer = (ev) => {
     ev.preventDefault();
