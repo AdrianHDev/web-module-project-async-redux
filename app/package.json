@@ -1,6 +1,5 @@
 {
   "name": "app",
-  "homepage": "https://adrianhdev.github.io/web-module-project-async-redux/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
